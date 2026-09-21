@@ -387,5 +387,5 @@ If you find this project useful, consider giving the repository a ⭐ on GitHub.
 
 **TravelHub — Your Plans. One Place.**
 
-URL WEB SITE
+WEB SITE URL
 https://booking-xi-gules.vercel.app/
