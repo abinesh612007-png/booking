@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TravelHub — Travel, Hotels &amp; Movies in One Place</title>
+<meta name="description" content="Book travel tickets, hotel rooms, and movie tickets all from one place. Simple, fast, done.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ─── Reset ─────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',-apple-system,system-ui,sans-serif;color:#111827;background:#fff;overflow-x:hidden;line-height:1.6}
+img{display:block;max-width:100%}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+input,select{font-family:inherit}
+
+/* ─── Design Tokens ─────────────────────────────── */
+:root{
+  --primary:#2563EB;
+  --primary-hover:#1D4ED8;
+  --primary-light:#EFF6FF;
+  --accent:#F59E0B;
+  --success:#10B981;
+  --error:#EF4444;
+  --dark:#0B1426;
+  --text-1:#111827;
+  --text-2:#6B7280;
+  --text-3:#9CA3AF;
+  --border:#E5E7EB;
+  --bg:#fff;
+  --bg-soft:#F9FAFB;
+  --bg-muted:#F3F4F6;
+  --r-sm:6px;--r:10px;--r-lg:14px;--r-xl:24px;--r-full:9999px;
+  --sh-sm:0 1px 3px rgba(0,0,0,.06);
+  --sh:0 4px 16px rgba(0,0,0,.08);
+  --sh-lg:0 12px 40px rgba(0,0,0,.12);
+  --sh-xl:0 24px 60px rgba(0,0,0,.16);
+  --t:.2s ease;
+  --mw:1200px;
+  --py:80px;
+}
+
+/* ─── Utilities ─────────────────────────────────── */
+.container{max-width:var(--mw);margin:0 auto;padding:0 24px}
+.section-tag{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--primary);background:var(--primary-light);padding:4px 12px;border-radius:var(--r-full);margin-bottom:12px;letter-spacing:.3px}
+.section-heading{font-size:clamp(26px,4vw,40px);font-weight:800;color:var(--text-1);line-height:1.2;margin-bottom:12px}
+.section-sub{font-size:17px;color:var(--text-2);max-width:540px}
+.section-header{margin-bottom:48px}
+.section-header.centered{text-align:center}
+.section-header.centered .section-sub{margin:0 auto}
+
+/* ─── Header ────────────────────────────────────── */
+.header{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid transparent;transition:border-color .3s,box-shadow .3s}
+.header.scrolled{border-color:var(--border);box-shadow:var(--sh)}
+.header-inner{display:flex;align-items:center;height:68px;gap:32px}
+.logo{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.logo-icon{width:36px;height:36px;background:var(--primary);border-radius:10px;display:flex;align-items:center;justify-content:center}
+.logo-icon svg{width:20px;height:20px;color:#fff}
+.logo-text{font-size:20px;font-weight:800;color:var(--text-1);letter-spacing:-.5px}
+.logo-text span{color:var(--primary)}
+.header-nav{display:flex;align-items:center;gap:4px;flex:1}
+.header-nav a{font-size:14px;font-weight:500;color:var(--text-2);padding:7px 12px;border-radius:var(--r-sm);transition:var(--t)}
+.header-nav a:hover,.header-nav a.active{color:var(--primary);background:var(--primary-light)}
+.header-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border-radius:var(--r);font-size:14px;font-weight:600;transition:var(--t);cursor:pointer}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-hover);transform:translateY(-1px);box-shadow:0 8px 24px rgba(37,99,235,.35)}
+.btn-ghost{color:var(--text-2)}
+.btn-ghost:hover{color:var(--text-1);background:var(--bg-muted)}
+.hamburger{display:none;flex-direction:column;gap:5px;padding:8px;border-radius:var(--r-sm);cursor:pointer;margin-left:auto}
+.hamburger span{display:block;width:22px;height:2px;background:var(--text-1);border-radius:2px;transition:var(--t)}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mobile-nav{display:none;position:fixed;top:68px;left:0;right:0;background:#fff;border-bottom:1px solid var(--border);padding:16px;z-index:999;box-shadow:var(--sh-lg)}
+.mobile-nav.open{display:block}
+.mobile-nav a{display:block;padding:12px 16px;font-size:15px;font-weight:500;color:var(--text-2);border-radius:var(--r);transition:var(--t)}
+.mobile-nav a:hover{color:var(--primary);background:var(--primary-light)}
+.mobile-nav-actions{display:flex;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.mobile-nav-actions .btn{flex:1;justify-content:center;border:1.5px solid var(--border)}
+
+/* ─── Hero ──────────────────────────────────────── */
+.hero{min-height:100vh;background:var(--dark);position:relative;display:flex;align-items:center;padding:68px 0 160px;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1488085061387-422e29b40080?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;opacity:.3}
+.hero-gradient{position:absolute;inset:0;background:linear-gradient(135deg,rgba(11,20,38,.95) 0%,rgba(11,20,38,.70) 50%,rgba(37,99,235,.25) 100%)}
+.hero-content{position:relative;z-index:1;text-align:center;max-width:800px;margin:0 auto}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.9);font-size:13px;font-weight:600;padding:6px 14px;border-radius:var(--r-full);margin-bottom:24px;backdrop-filter:blur(8px)}
+.hero-tag .dot{width:7px;height:7px;background:#10B981;border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.2)}}
+.hero h1{font-size:clamp(40px,7vw,76px);font-weight:900;color:#fff;line-height:1.05;margin-bottom:20px;letter-spacing:-2px}
+.hero h1 span{color:var(--accent)}
+.hero-sub{font-size:clamp(16px,2.5vw,20px);color:rgba(255,255,255,.75);line-height:1.6;margin-bottom:36px;max-width:560px;margin-left:auto;margin-right:auto}
+.hero-ctas{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:56px;flex-wrap:wrap}
+.btn-hp{background:var(--primary);color:#fff;padding:15px 36px;border-radius:var(--r-lg);font-size:16px;font-weight:700;transition:var(--t);box-shadow:0 8px 30px rgba(37,99,235,.45);display:inline-flex;align-items:center;gap:8px}
+.btn-hp:hover{background:var(--primary-hover);transform:translateY(-2px);box-shadow:0 12px 40px rgba(37,99,235,.55)}
+.btn-hg{color:rgba(255,255,255,.85);padding:15px 24px;border-radius:var(--r-lg);font-size:16px;font-weight:600;border:1.5px solid rgba(255,255,255,.2);transition:var(--t);display:inline-flex;align-items:center;gap:8px}
+.btn-hg:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.4)}
+.hero-stats{display:flex;align-items:center;justify-content:center;gap:48px;flex-wrap:wrap}
+.hero-stat{text-align:center}
+.hero-stat strong{display:block;font-size:28px;font-weight:800;color:#fff;line-height:1;margin-bottom:4px}
+.hero-stat span{font-size:13px;color:rgba(255,255,255,.6);font-weight:500}
+.stat-div{width:1px;height:36px;background:rgba(255,255,255,.15)}
+
+/* ─── Booking Search ────────────────────────────── */
+.booking-section{position:relative;z-index:10;margin-top:-80px;padding-bottom:0}
+.booking-card{background:#fff;border-radius:var(--r-xl);box-shadow:var(--sh-xl);overflow:hidden}
+.booking-tabs{display:flex;border-bottom:1px solid var(--border)}
+.booking-tab{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:18px 20px;font-size:15px;font-weight:600;color:var(--text-3);cursor:pointer;transition:var(--t);border-bottom:3px solid transparent;border-top:none;border-left:none;border-right:none;background:none}
+.booking-tab:hover{color:var(--text-2);background:var(--bg-soft)}
+.booking-tab.active{color:var(--primary);border-bottom-color:var(--primary);background:var(--bg)}
+.booking-tab svg{width:18px;height:18px;flex-shrink:0}
+.booking-panels{padding:28px 28px 24px}
+.booking-panel{display:none}
+.booking-panel.active{display:block}
+.booking-form-row{display:grid;gap:12px;margin-bottom:16px}
+.cols-2{grid-template-columns:1fr 1fr}
+.cols-3{grid-template-columns:1fr 1fr 1fr}
+.field-group{position:relative}
+.field-label{display:block;font-size:11px;font-weight:700;color:var(--text-3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:6px}
+.field-input-wrap{position:relative}
+.field-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--text-3);pointer-events:none}
+.field-input{width:100%;padding:12px 14px 12px 42px;border:1.5px solid var(--border);border-radius:var(--r);font-size:14px;color:var(--text-1);background:var(--bg-soft);transition:var(--t);outline:none;appearance:none;-webkit-appearance:none}
+.field-input:focus{border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.field-input::placeholder{color:var(--text-3)}
+.field-error-msg{display:none;font-size:12px;color:var(--error);margin-top:4px}
+.field-group.has-error .field-input{border-color:var(--error)}
+.field-group.has-error .field-error-msg{display:block}
+.travel-from-to{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:end;margin-bottom:16px}
+.swap-wrap{display:flex;align-items:flex-end;padding-bottom:2px}
+.swap-btn{width:40px;height:44px;border:1.5px solid var(--border);border-radius:var(--r);background:var(--bg-soft);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--t);color:var(--text-2);flex-shrink:0}
+.swap-btn:hover{background:var(--primary-light);border-color:var(--primary);color:var(--primary);transform:rotate(180deg)}
+.swap-btn svg{width:16px;height:16px}
+.search-btn{background:var(--primary);color:#fff;padding:14px 32px;border-radius:var(--r-lg);font-size:15px;font-weight:700;border:none;cursor:pointer;transition:var(--t);display:flex;align-items:center;justify-content:center;gap:8px;width:100%}
+.search-btn:hover{background:var(--primary-hover);transform:translateY(-1px);box-shadow:0 8px 24px rgba(37,99,235,.35)}
+.search-btn:disabled{opacity:.7;cursor:not-allowed;transform:none;box-shadow:none}
+.search-result{display:none;align-items:center;gap:12px;padding:14px 18px;border-radius:var(--r);margin-top:12px;font-size:14px;font-weight:500;background:var(--primary-light);color:var(--primary)}
+.search-result.show{display:flex}
+.spinner{width:18px;height:18px;border:2px solid rgba(37,99,235,.3);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ─── Sections Shared ───────────────────────────── */
+section{padding:var(--py) 0}
+.bg-soft{background:var(--bg-soft)}
+.bg-dark{background:var(--dark)}
+
+/* ─── Destination Cards ─────────────────────────── */
+.dest-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.dest-card{position:relative;border-radius:var(--r-lg);overflow:hidden;cursor:pointer;aspect-ratio:4/3}
+.dest-card img{width:100%;height:100%;object-fit:cover;transition:transform .4s ease}
+.dest-card:hover img{transform:scale(1.06)}
+.dest-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.75) 0%,transparent 60%)}
+.dest-info{position:absolute;bottom:0;left:0;right:0;padding:20px}
+.dest-type{font-size:11px;font-weight:600;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.dest-name{font-size:20px;font-weight:700;color:#fff;margin-bottom:6px}
+.dest-price{font-size:13px;color:rgba(255,255,255,.85)}
+.dest-price span{font-weight:700;color:var(--accent)}
+.dest-tag{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.15);backdrop-filter:blur(8px);color:#fff;font-size:12px;font-weight:600;padding:4px 10px;border-radius:var(--r-full);border:1px solid rgba(255,255,255,.2);opacity:0;transition:var(--t)}
+.dest-card:hover .dest-tag{opacity:1}
+
+/* ─── Hotel Cards ───────────────────────────────── */
+.hotels-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.hotel-card{background:#fff;border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--border);transition:var(--t)}
+.hotel-card:hover{transform:translateY(-4px);box-shadow:var(--sh-lg);border-color:transparent}
+.hotel-img{position:relative;aspect-ratio:4/3;overflow:hidden}
+.hotel-img img{width:100%;height:100%;object-fit:cover;transition:transform .4s ease}
+.hotel-card:hover .hotel-img img{transform:scale(1.05)}
+.hotel-badge{position:absolute;top:12px;left:12px;background:#EF4444;color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:var(--r-full)}
+.hotel-wish{position:absolute;top:12px;right:12px;width:34px;height:34px;background:rgba(255,255,255,.9);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--t);border:none}
+.hotel-wish:hover{background:#fff;transform:scale(1.1)}
+.hotel-wish svg{width:16px;height:16px;color:var(--text-2)}
+.hotel-body{padding:16px}
+.hotel-loc{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-3);margin-bottom:6px}
+.hotel-loc svg{width:12px;height:12px}
+.hotel-name{font-size:16px;font-weight:700;color:var(--text-1);margin-bottom:8px;line-height:1.3}
+.hotel-stars{color:var(--accent);font-size:13px;margin-bottom:10px}
+.hotel-rating{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.rating-badge{background:var(--primary);color:#fff;font-size:12px;font-weight:700;padding:3px 8px;border-radius:var(--r-sm)}
+.rating-label{font-size:13px;font-weight:600;color:var(--text-1)}
+.rating-count{font-size:12px;color:var(--text-3)}
+.hotel-foot{display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid var(--border)}
+.hotel-price strong{display:block;font-size:20px;font-weight:800;color:var(--text-1)}
+.hotel-price span{font-size:12px;color:var(--text-3)}
+.hotel-cta{background:var(--primary-light);color:var(--primary);font-size:13px;font-weight:600;padding:8px 16px;border-radius:var(--r);transition:var(--t);display:inline-flex;align-items:center;gap:4px}
+.hotel-cta:hover{background:var(--primary);color:#fff}
+
+/* ─── Movie Cards ───────────────────────────────── */
+.movies-wrap{overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;padding-bottom:8px}
+.movies-wrap::-webkit-scrollbar{display:none}
+.movies-row{display:flex;gap:20px;min-width:max-content}
+.movie-card{width:200px;flex-shrink:0;border-radius:var(--r-lg);overflow:hidden;background:#fff;border:1px solid var(--border);transition:var(--t)}
+.movie-card:hover{transform:translateY(-4px);box-shadow:var(--sh-lg);border-color:transparent}
+.movie-poster{height:280px;position:relative;overflow:hidden}
+.movie-poster-bg{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:52px}
+.movie-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:48px;height:48px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;opacity:0;transition:var(--t)}
+.movie-play svg{width:24px;height:24px;color:#fff}
+.movie-card:hover .movie-play{opacity:1}
+.movie-rating{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.7);color:#fff;font-size:12px;font-weight:700;padding:3px 8px;border-radius:var(--r-full)}
+.movie-body{padding:12px}
+.movie-title{font-size:14px;font-weight:700;color:var(--text-1);margin-bottom:4px;line-height:1.3}
+.movie-meta{font-size:11px;color:var(--text-3);margin-bottom:8px}
+.movie-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+.movie-tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:var(--r-full);background:var(--bg-muted);color:var(--text-2)}
+.movie-book{width:100%;padding:9px;background:var(--dark);color:#fff;border-radius:var(--r);font-size:12px;font-weight:600;transition:var(--t);text-align:center;display:block;border:none;cursor:pointer}
+.movie-book:hover{background:var(--primary)}
+
+/* ─── Features ──────────────────────────────────── */
+.features-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.feature-card{padding:28px 24px;border:1px solid var(--border);border-radius:var(--r-lg);transition:var(--t);background:#fff}
+.feature-card:hover{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.07);transform:translateY(-2px)}
+.feature-icon{width:52px;height:52px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.feature-icon svg{width:26px;height:26px}
+.feature-title{font-size:17px;font-weight:700;color:var(--text-1);margin-bottom:8px}
+.feature-desc{font-size:14px;color:var(--text-2);line-height:1.6}
+
+/* ─── How It Works ──────────────────────────────── */
+.hiw-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;position:relative}
+.hiw-steps::before{content:'';position:absolute;top:36px;left:calc(12.5% + 24px);right:calc(12.5% + 24px);height:1px;background:rgba(255,255,255,.1)}
+.hiw-step{text-align:center;position:relative;z-index:1}
+.hiw-num{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:22px;font-weight:800;color:var(--accent);position:relative}
+.hiw-icon{position:absolute;bottom:-6px;right:-6px;width:28px;height:28px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--dark)}
+.hiw-icon svg{width:14px;height:14px;color:#fff}
+.hiw-step h3{font-size:17px;font-weight:700;color:#fff;margin-bottom:8px}
+.hiw-step p{font-size:14px;color:rgba(255,255,255,.55);line-height:1.6}
+.dark-tag{background:rgba(255,255,255,.1);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.15)}
+.dark-heading{color:#fff}
+.dark-sub{color:rgba(255,255,255,.6)!important}
+
+/* ─── Testimonials ──────────────────────────────── */
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.testi-card{padding:28px;border:1px solid var(--border);border-radius:var(--r-lg);background:#fff;transition:var(--t)}
+.testi-card:hover{box-shadow:var(--sh-lg);border-color:transparent}
+.testi-quote{font-size:40px;color:var(--primary-light);line-height:1;font-family:Georgia,serif;margin-bottom:12px}
+.testi-text{font-size:15px;color:var(--text-2);line-height:1.7;margin-bottom:20px}
+.testi-stars{color:var(--accent);font-size:14px;margin-bottom:16px;letter-spacing:2px}
+.testi-author{display:flex;align-items:center;gap:12px}
+.author-av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0}
+.author-name{font-size:14px;font-weight:700;color:var(--text-1)}
+.author-loc{font-size:12px;color:var(--text-3)}
+
+/* ─── CTA / Early Access Form ───────────────────── */
+.cta-section{background:linear-gradient(135deg,#0B1426 0%,#1a2a4a 50%,#0B1426 100%);position:relative;overflow:hidden}
+.cta-section::before{content:'';position:absolute;top:-50%;right:-10%;width:600px;height:600px;background:radial-gradient(circle,rgba(37,99,235,.15) 0%,transparent 70%);pointer-events:none}
+.cta-inner{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.cta-perks{display:flex;flex-direction:column;gap:10px;margin-top:24px}
+.cta-perk{display:flex;align-items:center;gap:10px;font-size:14px;color:rgba(255,255,255,.75)}
+.cta-perk svg{width:18px;height:18px;color:var(--success);flex-shrink:0}
+.form-card{background:#fff;border-radius:var(--r-xl);padding:36px;box-shadow:var(--sh-xl)}
+.form-title{font-size:20px;font-weight:800;color:var(--text-1);margin-bottom:4px}
+.form-subtitle{font-size:14px;color:var(--text-3);margin-bottom:24px}
+.form-field{margin-bottom:16px}
+.form-label{display:block;font-size:13px;font-weight:600;color:var(--text-1);margin-bottom:6px}
+.form-input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--r);font-size:14px;color:var(--text-1);background:var(--bg-soft);transition:var(--t);outline:none}
+.form-input:focus{border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.form-input.error{border-color:var(--error)}
+.form-err{font-size:12px;color:var(--error);margin-top:4px;display:none}
+.form-err.show{display:block}
+.form-submit{width:100%;padding:14px;background:var(--primary);color:#fff;border:none;border-radius:var(--r-lg);font-size:15px;font-weight:700;cursor:pointer;transition:var(--t);display:flex;align-items:center;justify-content:center;gap:8px}
+.form-submit:hover:not(:disabled){background:var(--primary-hover);transform:translateY(-1px);box-shadow:0 8px 24px rgba(37,99,235,.35)}
+.form-submit:disabled{opacity:.7;cursor:not-allowed}
+.form-msg{display:none;padding:14px 18px;border-radius:var(--r);font-size:14px;font-weight:500;margin-top:12px;align-items:center;gap:10px}
+.form-msg.show{display:flex}
+.form-msg svg{width:18px;height:18px;flex-shrink:0}
+.msg-success{background:#ECFDF5;color:#065F46}
+.msg-error{background:#FEF2F2;color:#991B1B}
+
+/* ─── FAQ ───────────────────────────────────────── */
+.faq-list{max-width:720px;margin:0 auto}
+.faq-item{border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;margin-bottom:10px;background:#fff;transition:var(--t)}
+.faq-item:hover{box-shadow:var(--sh-sm)}
+.faq-item.open{border-color:var(--primary)}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;cursor:pointer;font-size:15px;font-weight:600;color:var(--text-1);gap:12px;user-select:none}
+.faq-icon{width:28px;height:28px;border:1.5px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:var(--t)}
+.faq-icon svg{width:14px;height:14px;color:var(--text-2);transition:transform .3s ease}
+.faq-item.open .faq-icon{background:var(--primary);border-color:var(--primary)}
+.faq-item.open .faq-icon svg{color:#fff;transform:rotate(45deg)}
+.faq-ans{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.faq-ans-inner{padding:0 20px 18px;font-size:14px;color:var(--text-2);line-height:1.7}
+.faq-item.open .faq-ans{max-height:300px}
+
+/* ─── Footer ────────────────────────────────────── */
+.footer{background:var(--dark);color:rgba(255,255,255,.65)}
+.footer-top{padding:64px 0 40px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px}
+.footer-tagline{font-size:14px;color:rgba(255,255,255,.5);margin-top:12px;margin-bottom:20px;max-width:260px;line-height:1.6}
+.footer-socials{display:flex;gap:10px}
+.social-link{width:36px;height:36px;background:rgba(255,255,255,.08);border-radius:8px;display:flex;align-items:center;justify-content:center;transition:var(--t);border:1px solid rgba(255,255,255,.05)}
+.social-link:hover{background:var(--primary);border-color:var(--primary)}
+.social-link svg{width:16px;height:16px;color:rgba(255,255,255,.7)}
+.social-link:hover svg{color:#fff}
+.footer-col-title{font-size:13px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.8px;margin-bottom:16px}
+.footer-links{display:flex;flex-direction:column;gap:10px}
+.footer-links a{font-size:14px;color:rgba(255,255,255,.5);transition:var(--t)}
+.footer-links a:hover{color:#fff}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding:20px 0}
+.footer-bottom-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-copy{color:rgba(255,255,255,.35);font-size:13px}
+.footer-bl{display:flex;gap:20px;flex-wrap:wrap}
+.footer-bl a{font-size:13px;color:rgba(255,255,255,.4);transition:var(--t)}
+.footer-bl a:hover{color:rgba(255,255,255,.8)}
+
+/* ─── Responsive ────────────────────────────────── */
+@media(max-width:1024px){
+  .dest-grid{grid-template-columns:repeat(2,1fr)}
+  .hotels-grid{grid-template-columns:repeat(2,1fr)}
+  .features-grid{grid-template-columns:repeat(2,1fr)}
+  .hiw-steps{grid-template-columns:repeat(2,1fr)}
+  .hiw-steps::before{display:none}
+  .testi-grid{grid-template-columns:repeat(2,1fr)}
+  .cta-inner{gap:48px}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:32px}
+}
+@media(max-width:768px){
+  :root{--py:56px}
+  .header-nav,.header-actions{display:none}
+  .hamburger{display:flex}
+  .hero{padding-bottom:120px}
+  .hero-stats{gap:24px}
+  .stat-div{display:none}
+  .booking-section{margin-top:-60px}
+  .booking-panels{padding:20px}
+  .booking-tab{font-size:13px;padding:14px 12px}
+  .booking-tab .tab-label{display:none}
+  .travel-from-to{grid-template-columns:1fr}
+  .swap-wrap{justify-content:center;padding:0}
+  .swap-btn{width:40px;height:36px;transform:rotate(90deg)}
+  .swap-btn:hover{transform:rotate(270deg)}
+  .cols-2,.cols-3{grid-template-columns:1fr}
+  .dest-grid{grid-template-columns:1fr}
+  .hotels-grid{grid-template-columns:1fr}
+  .features-grid{grid-template-columns:1fr}
+  .hiw-steps{grid-template-columns:1fr}
+  .testi-grid{grid-template-columns:1fr}
+  .cta-inner{grid-template-columns:1fr;gap:40px}
+  .footer-grid{grid-template-columns:1fr;gap:28px}
+  .footer-bottom-inner{flex-direction:column;text-align:center}
+  .footer-bl{justify-content:center}
+}
+@media(max-width:480px){
+  .hero h1{letter-spacing:-1px}
+  .hero-ctas{flex-direction:column;align-items:stretch}
+  .btn-hp,.btn-hg{justify-content:center}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════
+     HEADER
+════════════════════════════════════════════════ -->
+<header class="header" id="header">
+  <div class="container">
+    <div class="header-inner">
+      <a href="#" class="logo">
+        <div class="logo-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 2c-2-2-4-2-5.5-.5L10 5 1.8 6.2a.5.5 0 0 0-.3.8l1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5a.5.5 0 0 0 .8-.3z"/></svg>
+        </div>
+        <span class="logo-text">Travel<span>Hub</span></span>
+      </a>
+      <nav class="header-nav">
+        <a href="#travel-section" class="active">Travel</a>
+        <a href="#hotels-section">Hotels</a>
+        <a href="#movies-section">Movies</a>
+        <a href="#">My Bookings</a>
+        <a href="#faq-section">Help</a>
+      </nav>
+      <div class="header-actions">
+        <button class="btn btn-ghost">Sign In</button>
+        <a href="#cta-section" class="btn btn-primary">Get Started</a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="#travel-section">✈️ Travel</a>
+  <a href="#hotels-section">🏨 Hotels</a>
+  <a href="#movies-section">🎬 Movies</a>
+  <a href="#">📋 My Bookings</a>
+  <a href="#faq-section">❓ Help</a>
+  <div class="mobile-nav-actions">
+    <button class="btn" style="border:1.5px solid var(--border);flex:1;justify-content:center">Sign In</button>
+    <a href="#cta-section" class="btn btn-primary" style="flex:1;justify-content:center">Get Started</a>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     HERO
+════════════════════════════════════════════════ -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-gradient"></div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-tag">
+        <span class="dot"></span>
+        India's Unified Booking Platform
+      </div>
+      <h1>Your Plans.<br><span>One Place.</span></h1>
+      <p class="hero-sub">Travel, stay, and movie tickets — all in one place. Stop switching apps. Start exploring.</p>
+      <div class="hero-ctas">
+        <a href="#booking-section" class="btn-hp">Start Planning</a>
+        <a href="#how-it-works" class="btn-hg">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          How it works
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><strong>50,000+</strong><span>Trips Booked</span></div>
+        <div class="stat-div"></div>
+        <div class="hero-stat"><strong>8,000+</strong><span>Hotels Listed</span></div>
+        <div class="stat-div"></div>
+        <div class="hero-stat"><strong>3,500+</strong><span>Movies &amp; Shows</span></div>
+        <div class="stat-div"></div>
+        <div class="hero-stat"><strong>4.8★</strong><span>App Rating</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     BOOKING SEARCH
+════════════════════════════════════════════════ -->
+<section class="booking-section" id="booking-section">
+  <div class="container">
+    <div class="booking-card">
+      <!-- Tabs -->
+      <div class="booking-tabs" role="tablist">
+        <button class="booking-tab active" data-tab="travel" role="tab" aria-selected="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 2c-2-2-4-2-5.5-.5L10 5 1.8 6.2a.5.5 0 0 0-.3.8l1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5a.5.5 0 0 0 .8-.3z"/></svg>
+          <span class="tab-label">Travel</span>
+        </button>
+        <button class="booking-tab" data-tab="hotels" role="tab" aria-selected="false">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V12h18v10"/><path d="M2 12h20"/><path d="M7 12V7a5 5 0 0 1 10 0v5"/></svg>
+          <span class="tab-label">Hotels</span>
+        </button>
+        <button class="booking-tab" data-tab="movies" role="tab" aria-selected="false">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+          <span class="tab-label">Movies</span>
+        </button>
+      </div>
+
+      <!-- Panels -->
+      <div class="booking-panels">
+
+        <!-- TRAVEL PANEL -->
+        <div class="booking-panel active" id="panel-travel" role="tabpanel">
+          <div class="travel-from-to">
+            <div class="field-group" id="fg-from">
+              <label class="field-label" for="travel-from">From</label>
+              <div class="field-input-wrap">
+                <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                <input type="text" id="travel-from" class="field-input" placeholder="Leaving from" autocomplete="off">
+              </div>
+              <span class="field-error-msg">Please enter your departure city</span>
+            </div>
+            <div class="swap-wrap">
+              <button class="swap-btn" id="swapBtn" title="Swap cities" aria-label="Swap from and to">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16V4m0 0L3 8m4-4 4 4"/><path d="M17 8v12m0 0 4-4m-4 4-4-4"/></svg>
+              </button>
+            </div>
+            <div class="field-group" id="fg-to">
+              <label class="field-label" for="travel-to">To</label>
+              <div class="field-input-wrap">
+                <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                <input type="text" id="travel-to" class="field-input" placeholder="Going to" autocomplete="off">
+              </div>
+              <span class="field-error-msg">Please enter your destination city</span>
+            </div>
+          </div>
+          <div class="booking-form-row cols-2">
+            <div class="field-group" id="fg-travel-date">
+              <label class="field-label" for="travel-date">Travel Date</label>
+              <div class="field-input-wrap">
+                <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <input type="date" id="travel-date" class="field-input">
+              </div>
+              <span class="field-error-msg">Please select a travel date</span>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="travel-travellers">Travellers</label>
+              <div class="field-input-wrap">
+                <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <select id="travel-travellers" class="field-input">
+                  <option>1 Traveller</option>
+                  <option>2 Travellers</option>
+                  <option>3 Travellers</option>
+                  <option>4 Travellers</option>
+                  <option>5+ Travellers</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <button class="search-btn" id="searchTravelBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Search Travel
+          </button>
+          <div class="search-result" id="travel-result">
+            <div class="spinner"></div>
+            <span>Searching for the best travel options...</span>
+          </div>
+        </div>
+
+        <!-- HOTELS PANEL -->
+        <div class="booking-panel" id="panel-hotels" role="tabpanel">
+          <div class="booking-form-row">
+            <div class="field-group" id="fg-hotel-dest">
+              <label class="field-label" for="hotel-dest">Destination</label>
+              <div class="field-input-wrap">
+                <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                <input type="text" id="hotel-dest" class="field-input" placeholder="Where do you want to stay?" autocomplete="off">
+              </div>
+              <span class="field-error-msg">Please enter a destination</span>
+            </div>
+          </div>
+          <div class="booking-form-row cols-3">
+            <div class="field-group" id="fg-checkin">
+              <label class="field-label" for="checkin">Check-in</label>
+              <div class="field-input-wrap">
+                <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <input type="date" id="checkin" class="field-input">
+              </div>
+              <span class="field-error-msg">Please select check-in date</span>
+            </div>
+            <div class="field-group" id="fg-checkout">
+              <label class="field-label" for="checkout">Check-out</label>
+              <div class="field-input-wrap">
+                <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <input type="date" id="checkout" class="field-input">
+              </div>
+              <span class="field-error-msg">Must be after check-in date</span>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="hotel-guests">Guests &amp; Rooms</label>
+              <div class="field-input-wrap">
+                <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <select id="hotel-guests" class="field-input">
+                  <option>1 Guest, 1 Room</option>
+                  <option>2 Guests, 1 Room</option>
+                  <option>2 Guests, 2 Rooms</option>
+                  <option>3 Guests, 1 Room</option>
+                  <option>4 Guests, 2 Rooms</option>
+                  <option>5+ Guests</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <button class="search-btn" id="searchHotelsBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Search Hotels
+          </button>
+          <div class="search-result" id="hotels-result">
+            <div class="spinner"></div>
+            <span>Finding available stays...</span>
+          </div>
+        </div>
+
+        <!-- MOVIES PANEL -->
+        <div class="booking-panel" id="panel-movies" role="tabpanel">
+          <div class="booking-form-row cols-2">
+            <div class="field-group" id="fg-movie-city">
+              <label class="field-label" for="movie-city">City</label>
+              <div class="field-input-wrap">
+                <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                <select id="movie-city" class="field-input">
+                  <option value="">Choose your city</option>
+                  <option>Mumbai</option><option>Delhi</option><option>Bangalore</option>
+                  <option>Chennai</option><option>Hyderabad</option><option>Pune</option>
+                  <option>Kolkata</option><option>Ahmedabad</option><option>Jaipur</option><option>Goa</option>
+                </select>
+              </div>
+              <span class="field-error-msg">Please select your city</span>
+            </div>
+            <div class="field-group" id="fg-movie-name">
+              <label class="field-label" for="movie-name">Movie</label>
+              <div class="field-input-wrap">
+                <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+                <input type="text" id="movie-name" class="field-input" placeholder="Search movies" autocomplete="off">
+              </div>
+              <span class="field-error-msg">Please enter a movie name</span>
+            </div>
+          </div>
+          <div class="booking-form-row">
+            <div class="field-group" id="fg-movie-date">
+              <label class="field-label" for="movie-date">Date</label>
+              <div class="field-input-wrap">
+                <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <input type="date" id="movie-date" class="field-input">
+              </div>
+              <span class="field-error-msg">Please select a date</span>
+            </div>
+          </div>
+          <button class="search-btn" id="findMoviesBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Find Movies
+          </button>
+          <div class="search-result" id="movies-result">
+            <div class="spinner"></div>
+            <span>Checking movie shows near you...</span>
+          </div>
+        </div>
+
+      </div><!-- /booking-panels -->
+    </div><!-- /booking-card -->
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     POPULAR DESTINATIONS
+════════════════════════════════════════════════ -->
+<section id="travel-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">✈️ Popular Destinations</div>
+      <h2 class="section-heading">Where's everyone headed?</h2>
+      <p class="section-sub">From beaches to mountains — pick your next trip.</p>
+    </div>
+    <div class="dest-grid">
+      <div class="dest-card">
+        <!-- Replace with original Figma asset -->
+        <img src="https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=800&q=80" alt="Goa beaches" loading="lazy">
+        <div class="dest-overlay"></div>
+        <span class="dest-tag">Book Now →</span>
+        <div class="dest-info">
+          <div class="dest-type">Beaches</div>
+          <div class="dest-name">Goa</div>
+          <div class="dest-price">From <span>₹2,999</span></div>
+        </div>
+      </div>
+      <div class="dest-card">
+        <!-- Replace with original Figma asset -->
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=80" alt="Manali mountains" loading="lazy">
+        <div class="dest-overlay"></div>
+        <span class="dest-tag">Book Now →</span>
+        <div class="dest-info">
+          <div class="dest-type">Mountains</div>
+          <div class="dest-name">Manali</div>
+          <div class="dest-price">From <span>₹3,499</span></div>
+        </div>
+      </div>
+      <div class="dest-card">
+        <!-- Replace with original Figma asset -->
+        <img src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80" alt="Kerala backwaters" loading="lazy">
+        <div class="dest-overlay"></div>
+        <span class="dest-tag">Book Now →</span>
+        <div class="dest-info">
+          <div class="dest-type">Backwaters</div>
+          <div class="dest-name">Kerala</div>
+          <div class="dest-price">From <span>₹3,299</span></div>
+        </div>
+      </div>
+      <div class="dest-card">
+        <!-- Replace with original Figma asset -->
+        <img src="https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=800&q=80" alt="Rajasthan heritage" loading="lazy">
+        <div class="dest-overlay"></div>
+        <span class="dest-tag">Book Now →</span>
+        <div class="dest-info">
+          <div class="dest-type">Heritage</div>
+          <div class="dest-name">Rajasthan</div>
+          <div class="dest-price">From <span>₹2,799</span></div>
+        </div>
+      </div>
+      <div class="dest-card">
+        <!-- Replace with original Figma asset -->
+        <img src="https://images.unsplash.com/photo-1570168007204-dfb528c6958f?auto=format&fit=crop&w=800&q=80" alt="Mumbai city" loading="lazy">
+        <div class="dest-overlay"></div>
+        <span class="dest-tag">Book Now →</span>
+        <div class="dest-info">
+          <div class="dest-type">City</div>
+          <div class="dest-name">Mumbai</div>
+          <div class="dest-price">From <span>₹1,999</span></div>
+        </div>
+      </div>
+      <div class="dest-card">
+        <!-- Replace with original Figma asset -->
+        <img src="https://images.unsplash.com/photo-1587474027022-5b7b72e7ff99?auto=format&fit=crop&w=800&q=80" alt="Delhi culture" loading="lazy">
+        <div class="dest-overlay"></div>
+        <span class="dest-tag">Book Now →</span>
+        <div class="dest-info">
+          <div class="dest-type">Culture</div>
+          <div class="dest-name">Delhi</div>
+          <div class="dest-price">From <span>₹1,499</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     HOTEL PICKS
+════════════════════════════════════════════════ -->
+<section class="bg-soft" id="hotels-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">🏨 Top Hotels</div>
+      <h2 class="section-heading">Places worth staying.</h2>
+      <p class="section-sub">Verified hotels, honest reviews, real prices.</p>
+    </div>
+    <div class="hotels-grid">
+      <!-- Hotel 1 -->
+      <div class="hotel-card">
+        <div class="hotel-img">
+          <!-- Replace with original Figma asset -->
+          <img src="https://images.unsplash.com/photo-1564501049412-61d2561fe855?auto=format&fit=crop&w=800&q=80" alt="Grand Hyatt Goa" loading="lazy">
+          <span class="hotel-badge">23% OFF</span>
+          <button class="hotel-wish" aria-label="Wishlist">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+        </div>
+        <div class="hotel-body">
+          <div class="hotel-loc"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>Candolim, Goa</div>
+          <div class="hotel-name">Grand Hyatt Goa</div>
+          <div class="hotel-stars">★★★★★</div>
+          <div class="hotel-rating"><span class="rating-badge">4.8</span><span class="rating-label">Excellent</span><span class="rating-count">2,140 reviews</span></div>
+          <div class="hotel-foot">
+            <div class="hotel-price"><strong>₹8,500</strong><span>per night</span></div>
+            <a href="#" class="hotel-cta">View Deal →</a>
+          </div>
+        </div>
+      </div>
+      <!-- Hotel 2 -->
+      <div class="hotel-card">
+        <div class="hotel-img">
+          <!-- Replace with original Figma asset -->
+          <img src="https://images.unsplash.com/photo-1551882547-ff40c4a49b6e?auto=format&fit=crop&w=800&q=80" alt="Taj Mahal Palace Mumbai" loading="lazy">
+          <button class="hotel-wish" aria-label="Wishlist">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+        </div>
+        <div class="hotel-body">
+          <div class="hotel-loc"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>Colaba, Mumbai</div>
+          <div class="hotel-name">Taj Mahal Palace</div>
+          <div class="hotel-stars">★★★★★</div>
+          <div class="hotel-rating"><span class="rating-badge">4.9</span><span class="rating-label">Exceptional</span><span class="rating-count">5,312 reviews</span></div>
+          <div class="hotel-foot">
+            <div class="hotel-price"><strong>₹12,000</strong><span>per night</span></div>
+            <a href="#" class="hotel-cta">View Deal →</a>
+          </div>
+        </div>
+      </div>
+      <!-- Hotel 3 -->
+      <div class="hotel-card">
+        <div class="hotel-img">
+          <!-- Replace with original Figma asset -->
+          <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80" alt="Kumarakom Lake Resort" loading="lazy">
+          <span class="hotel-badge">15% OFF</span>
+          <button class="hotel-wish" aria-label="Wishlist">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+        </div>
+        <div class="hotel-body">
+          <div class="hotel-loc"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>Kumarakom, Kerala</div>
+          <div class="hotel-name">Kumarakom Lake Resort</div>
+          <div class="hotel-stars">★★★★★</div>
+          <div class="hotel-rating"><span class="rating-badge">4.7</span><span class="rating-label">Excellent</span><span class="rating-count">1,420 reviews</span></div>
+          <div class="hotel-foot">
+            <div class="hotel-price"><strong>₹6,200</strong><span>per night</span></div>
+            <a href="#" class="hotel-cta">View Deal →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     NOW SHOWING — MOVIES
+════════════════════════════════════════════════ -->
+<section id="movies-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">🎬 Now Showing</div>
+      <h2 class="section-heading">Movie tonight?</h2>
+      <p class="section-sub">Pick your show. Grab your seats.</p>
+    </div>
+    <div class="movies-wrap">
+      <div class="movies-row">
+        <div class="movie-card">
+          <div class="movie-poster">
+            <div class="movie-poster-bg" style="background:linear-gradient(135deg,#1a1a2e,#0f3460)">🚀</div>
+            <div class="movie-play"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+            <div class="movie-rating">⭐ 8.2</div>
+          </div>
+          <div class="movie-body">
+            <div class="movie-title">The Last Voyage</div>
+            <div class="movie-meta">2h 28m • UA</div>
+            <div class="movie-tags"><span class="movie-tag">Action</span><span class="movie-tag">Thriller</span><span class="movie-tag">Hindi</span></div>
+            <button class="movie-book">Book Seats</button>
+          </div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-poster">
+            <div class="movie-poster-bg" style="background:linear-gradient(135deg,#4a1942,#c77dff)">🌆</div>
+            <div class="movie-play"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+            <div class="movie-rating">⭐ 7.9</div>
+          </div>
+          <div class="movie-body">
+            <div class="movie-title">City of Stars</div>
+            <div class="movie-meta">2h 10m • U</div>
+            <div class="movie-tags"><span class="movie-tag">Drama</span><span class="movie-tag">Romance</span><span class="movie-tag">Hindi</span></div>
+            <button class="movie-book">Book Seats</button>
+          </div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-poster">
+            <div class="movie-poster-bg" style="background:linear-gradient(135deg,#1b4332,#52b788)">🌿</div>
+            <div class="movie-play"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+            <div class="movie-rating">⭐ 8.5</div>
+          </div>
+          <div class="movie-body">
+            <div class="movie-title">Jungle Protocol</div>
+            <div class="movie-meta">2h 45m • UA</div>
+            <div class="movie-tags"><span class="movie-tag">Action</span><span class="movie-tag">Tamil</span><span class="movie-tag">Hindi</span></div>
+            <button class="movie-book">Book Seats</button>
+          </div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-poster">
+            <div class="movie-poster-bg" style="background:linear-gradient(135deg,#03071e,#e85d04)">⏳</div>
+            <div class="movie-play"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+            <div class="movie-rating">⭐ 8.1</div>
+          </div>
+          <div class="movie-body">
+            <div class="movie-title">Echoes of Time</div>
+            <div class="movie-meta">2h 15m • UA</div>
+            <div class="movie-tags"><span class="movie-tag">Sci-Fi</span><span class="movie-tag">English</span><span class="movie-tag">Hindi</span></div>
+            <button class="movie-book">Book Seats</button>
+          </div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-poster">
+            <div class="movie-poster-bg" style="background:linear-gradient(135deg,#10002b,#7b2fff)">🌃</div>
+            <div class="movie-play"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+            <div class="movie-rating">⭐ 8.3</div>
+          </div>
+          <div class="movie-body">
+            <div class="movie-title">Mumbai Nights</div>
+            <div class="movie-meta">2h 35m • A</div>
+            <div class="movie-tags"><span class="movie-tag">Crime</span><span class="movie-tag">Thriller</span><span class="movie-tag">Hindi</span></div>
+            <button class="movie-book">Book Seats</button>
+          </div>
+        </div>
+        <div class="movie-card">
+          <div class="movie-poster">
+            <div class="movie-poster-bg" style="background:linear-gradient(135deg,#2b2d42,#8d99ae)">🔄</div>
+            <div class="movie-play"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+            <div class="movie-rating">⭐ 7.6</div>
+          </div>
+          <div class="movie-body">
+            <div class="movie-title">The Return</div>
+            <div class="movie-meta">2h 05m • U</div>
+            <div class="movie-tags"><span class="movie-tag">Drama</span><span class="movie-tag">Malayalam</span><span class="movie-tag">Hindi</span></div>
+            <button class="movie-book">Book Seats</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     FEATURES
+════════════════════════════════════════════════ -->
+<section class="bg-soft">
+  <div class="container">
+    <div class="section-header centered">
+      <div class="section-tag">Why TravelHub</div>
+      <h2 class="section-heading">One app. Every plan.</h2>
+      <p class="section-sub">We built this because planning a trip across 5 different apps is exhausting.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#EFF6FF"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+        <div class="feature-title">One Search</div>
+        <div class="feature-desc">Find travel, hotels, and movies without switching apps. Everything in one search.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#FFF7ED"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <div class="feature-title">Best Prices</div>
+        <div class="feature-desc">We compare hundreds of options across providers so you always get the best deal.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#F0FDF4"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+        <div class="feature-title">All in One</div>
+        <div class="feature-desc">Manage every booking from a single dashboard. Flights, hotels, and movie tickets.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#FFF1F2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div class="feature-title">Safe &amp; Secure</div>
+        <div class="feature-desc">Encrypted payments, verified listings, and 24/7 support. Book with confidence.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     HOW IT WORKS
+════════════════════════════════════════════════ -->
+<section class="bg-dark" id="how-it-works">
+  <div class="container">
+    <div class="section-header centered">
+      <div class="section-tag dark-tag">How it works</div>
+      <h2 class="section-heading dark-heading">Search. Choose. Book. Done.</h2>
+      <p class="section-sub dark-sub">Four simple steps to get from planning to packing.</p>
+    </div>
+    <div class="hiw-steps">
+      <div class="hiw-step">
+        <div class="hiw-num">1<span class="hiw-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span></div>
+        <h3>Tell us your plan</h3>
+        <p>Where, when, and what? Travel, hotel, or a movie night — we've got it.</p>
+      </div>
+      <div class="hiw-step">
+        <div class="hiw-num">2<span class="hiw-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span></div>
+        <h3>Browse options</h3>
+        <p>Sort by price, rating, or time. Hundreds of verified options at your fingertips.</p>
+      </div>
+      <div class="hiw-step">
+        <div class="hiw-num">3<span class="hiw-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span></div>
+        <h3>Book instantly</h3>
+        <p>Secure checkout in under a minute. One payment for everything.</p>
+      </div>
+      <div class="hiw-step">
+        <div class="hiw-num">4<span class="hiw-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span></div>
+        <h3>Show up &amp; enjoy</h3>
+        <p>Everything confirmed. Tickets in your pocket. Just turn up and have fun.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     TESTIMONIALS
+════════════════════════════════════════════════ -->
+<section>
+  <div class="container">
+    <div class="section-header centered">
+      <div class="section-tag">What people say</div>
+      <h2 class="section-heading">Real trips. Real reviews.</h2>
+      <p class="section-sub">From weekend getaways to full holidays — here's what our users think.</p>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-quote">"</div>
+        <p class="testi-text">Booked flights, a hotel, and movie tickets for our anniversary trip in under 10 minutes. Couldn't believe how easy it was.</p>
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-author">
+          <div class="author-av" style="background:linear-gradient(135deg,#667eea,#764ba2)">P</div>
+          <div><div class="author-name">Priya Sharma</div><div class="author-loc">Mumbai, Maharashtra</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-quote">"</div>
+        <p class="testi-text">Finally one app that does it all. No more switching between 5 different apps just to plan a weekend trip. This is the one.</p>
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-author">
+          <div class="author-av" style="background:linear-gradient(135deg,#f093fb,#f5576c)">R</div>
+          <div><div class="author-name">Rahul Menon</div><div class="author-loc">Bangalore, Karnataka</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-quote">"</div>
+        <p class="testi-text">The movie booking feature is brilliant. I searched for shows in Goa and booked tickets before we even landed. Super smooth.</p>
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-author">
+          <div class="author-av" style="background:linear-gradient(135deg,#4facfe,#00f2fe)">A</div>
+          <div><div class="author-name">Anjali Singh</div><div class="author-loc">Delhi, NCR</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     EARLY ACCESS / CONTACT FORM
+════════════════════════════════════════════════ -->
+<section class="cta-section" id="cta-section">
+  <div class="container">
+    <div class="cta-inner">
+      <div class="cta-left">
+        <div class="section-tag dark-tag">Early Access</div>
+        <h2 class="section-heading dark-heading">Get in early.</h2>
+        <p class="section-sub dark-sub">Be among the first to try the full platform. We'll reach out when you're up next. No spam, ever.</p>
+        <div class="cta-perks">
+          <div class="cta-perk"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Priority access before public launch</div>
+          <div class="cta-perk"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Exclusive early-user discounts</div>
+          <div class="cta-perk"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Help shape the product with your feedback</div>
+        </div>
+      </div>
+      <div class="cta-right">
+        <div class="form-card">
+          <div class="form-title">Reserve your spot</div>
+          <div class="form-subtitle">Takes 30 seconds.</div>
+          <form id="contactForm" novalidate>
+            <div class="form-field">
+              <label class="form-label" for="cf-name">Your Name</label>
+              <input type="text" id="cf-name" class="form-input" placeholder="e.g. Priya Sharma" autocomplete="name">
+              <div class="form-err" id="err-name">Please enter your full name (min. 2 characters)</div>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="cf-email">Email Address</label>
+              <input type="email" id="cf-email" class="form-input" placeholder="you@example.com" autocomplete="email">
+              <div class="form-err" id="err-email">Please enter a valid email address</div>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="cf-phone">Phone Number</label>
+              <input type="tel" id="cf-phone" class="form-input" placeholder="+91 98765 43210" autocomplete="tel">
+              <div class="form-err" id="err-phone">Please enter a valid Indian mobile number</div>
+            </div>
+            <button type="submit" class="form-submit" id="submitBtn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              Get Early Access
+            </button>
+          </form>
+          <div class="form-msg msg-success" id="formSuccess">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Thanks! We've received your details. You're on the list. 🎉
+          </div>
+          <div class="form-msg msg-error" id="formErrorMsg">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Something went wrong. Please try again.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     FAQ
+════════════════════════════════════════════════ -->
+<section class="bg-soft" id="faq-section">
+  <div class="container">
+    <div class="section-header centered">
+      <div class="section-tag">FAQ</div>
+      <h2 class="section-heading">Questions?</h2>
+      <p class="section-sub">The ones we get most often.</p>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q" role="button" tabindex="0" aria-expanded="false">
+          <span>Can I book travel, hotels, and movies in a single checkout?</span>
+          <div class="faq-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+        </div>
+        <div class="faq-ans"><div class="faq-ans-inner">Yes! That's exactly what TravelHub is built for. Add travel tickets, hotel rooms, and movie tickets to a single booking and pay for everything in one transaction. No separate apps, no repeated payment steps.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" role="button" tabindex="0" aria-expanded="false">
+          <span>Are the hotel prices on the platform guaranteed?</span>
+          <div class="faq-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+        </div>
+        <div class="faq-ans"><div class="faq-ans-inner">Yes. The prices shown are final and inclusive of all taxes and fees. If you find a lower price for the same room on the hotel's own website within 24 hours of booking, we'll match it. No questions asked.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" role="button" tabindex="0" aria-expanded="false">
+          <span>How do I cancel or modify a booking?</span>
+          <div class="faq-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+        </div>
+        <div class="faq-ans"><div class="faq-ans-inner">Use the "My Bookings" section in the app. Travel and hotel bookings can typically be cancelled up to 24 hours before. Movie tickets can be cancelled up to 1 hour before the show. Policies vary by booking type.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" role="button" tabindex="0" aria-expanded="false">
+          <span>Is my payment information secure?</span>
+          <div class="faq-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+        </div>
+        <div class="faq-ans"><div class="faq-ans-inner">Absolutely. We use 256-bit SSL encryption and are PCI-DSS compliant. We never store your card details on our servers. All payments go through RBI-approved payment gateways.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" role="button" tabindex="0" aria-expanded="false">
+          <span>Which cities in India does TravelHub cover?</span>
+          <div class="faq-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+        </div>
+        <div class="faq-ans"><div class="faq-ans-inner">Travel and hotels are available across 200+ cities in India. Movie bookings are live in 50+ cities with rapid expansion underway. Sign up for early access and we'll notify you the moment we launch in your city.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" role="button" tabindex="0" aria-expanded="false">
+          <span>How fast will I receive my booking confirmation?</span>
+          <div class="faq-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+        </div>
+        <div class="faq-ans"><div class="faq-ans-inner">Instantly. As soon as your payment is confirmed, you'll receive a booking confirmation via email and SMS within 30 seconds. Tickets are also available to download directly from the app.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-top">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="#" class="logo">
+            <div class="logo-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 2c-2-2-4-2-5.5-.5L10 5 1.8 6.2a.5.5 0 0 0-.3.8l1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5a.5.5 0 0 0 .8-.3z"/></svg></div>
+            <span class="logo-text" style="color:#fff">Travel<span>Hub</span></span>
+          </a>
+          <p class="footer-tagline">Travel, hotels, and movies — all in one place. Plan less. Experience more.</p>
+          <div class="footer-socials">
+            <a href="#" class="social-link" aria-label="Twitter"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg></a>
+            <a href="#" class="social-link" aria-label="Instagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+            <a href="#" class="social-link" aria-label="Facebook"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+            <a href="#" class="social-link" aria-label="LinkedIn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+          </div>
+        </div>
+        <div>
+          <div class="footer-col-title">Platform</div>
+          <div class="footer-links">
+            <a href="#travel-section">Travel Booking</a>
+            <a href="#hotels-section">Hotel Booking</a>
+            <a href="#movies-section">Movie Tickets</a>
+            <a href="#">Offers &amp; Deals</a>
+            <a href="#">Group Bookings</a>
+          </div>
+        </div>
+        <div>
+          <div class="footer-col-title">Company</div>
+          <div class="footer-links">
+            <a href="#">About Us</a>
+            <a href="#">Blog</a>
+            <a href="#">Careers</a>
+            <a href="#">Press</a>
+            <a href="#">Investors</a>
+          </div>
+        </div>
+        <div>
+          <div class="footer-col-title">Support</div>
+          <div class="footer-links">
+            <a href="#faq-section">Help Centre</a>
+            <a href="#cta-section">Contact Us</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Refund Policy</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="container">
+      <div class="footer-bottom-inner">
+        <span class="footer-copy">© 2025 TravelHub. All rights reserved. Made with ❤️ in India.</span>
+        <div class="footer-bl">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Cookies</a>
+          <a href="#">Sitemap</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   BOOKING URLS — replace with real URLs when backend is ready
+══════════════════════════════════════════════════════════ */
+const TRAVEL_BOOKING_URL = "";
+const HOTEL_BOOKING_URL  = "";
+const MOVIE_BOOKING_URL  = "";
+
+/* ══════════════════════════════════════════════════════════
+   GOOGLE APPS SCRIPT URL
+══════════════════════════════════════════════════════════ */
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz30ts4KJx74vkFsJoEUX4ZG-jk_Gr-NSYBnIiDQ8B8KpAifepKf95G8TcpKxjOjSNm/exec";
+
+/* ── Header scroll shadow ─────────────────────────────── */
+const header = document.getElementById('header');
+window.addEventListener('scroll', () => {
+  header.classList.toggle('scrolled', window.scrollY > 10);
+}, { passive: true });
+
+/* ── Mobile nav toggle ───────────────────────────────── */
+const hamburger = document.getElementById('hamburger');
+const mobileNav = document.getElementById('mobileNav');
+hamburger.addEventListener('click', () => {
+  const open = mobileNav.classList.toggle('open');
+  hamburger.classList.toggle('open', open);
+  hamburger.setAttribute('aria-expanded', open);
+});
+mobileNav.querySelectorAll('a').forEach(l => l.addEventListener('click', () => {
+  mobileNav.classList.remove('open');
+  hamburger.classList.remove('open');
+  hamburger.setAttribute('aria-expanded', false);
+}));
+
+/* ── Booking tabs ────────────────────────────────────── */
+document.querySelectorAll('.booking-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.booking-tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
+    document.querySelectorAll('.booking-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    tab.setAttribute('aria-selected','true');
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+    document.querySelectorAll('.search-result').forEach(r => r.classList.remove('show'));
+  });
+});
+
+/* ── Swap From ↔ To ──────────────────────────────────── */
+document.getElementById('swapBtn').addEventListener('click', () => {
+  const f = document.getElementById('travel-from');
+  const t = document.getElementById('travel-to');
+  [f.value, t.value] = [t.value, f.value];
+});
+
+/* ── Set min dates to today ───────────────────────────── */
+const today = new Date().toISOString().split('T')[0];
+document.querySelectorAll('input[type="date"]').forEach(i => i.min = today);
+
+/* ── Hotel checkout after checkin ────────────────────── */
+const checkin  = document.getElementById('checkin');
+const checkout = document.getElementById('checkout');
+checkin.addEventListener('change', () => {
+  if (checkin.value) {
+    checkout.min = checkin.value;
+    if (checkout.value && checkout.value <= checkin.value) checkout.value = '';
+  }
+});
+
+/* ── Booking search helpers ──────────────────────────── */
+function setErr(id, show) {
+  const g = document.getElementById(id);
+  if (g) g.classList.toggle('has-error', show);
+}
+function clearErrs(panelId) {
+  document.querySelectorAll('#' + panelId + ' .field-group').forEach(g => g.classList.remove('has-error'));
+}
+function showSearching(resultId, btn) {
+  const r = document.getElementById(resultId);
+  r.classList.add('show');
+  btn.disabled = true;
+  setTimeout(() => { r.classList.remove('show'); btn.disabled = false; }, 3000);
+}
+
+/* Travel search */
+document.getElementById('searchTravelBtn').addEventListener('click', function() {
+  clearErrs('panel-travel');
+  let ok = true;
+  if (!document.getElementById('travel-from').value.trim()) { setErr('fg-from', true); ok = false; }
+  if (!document.getElementById('travel-to').value.trim())   { setErr('fg-to', true);   ok = false; }
+  if (!document.getElementById('travel-date').value)        { setErr('fg-travel-date', true); ok = false; }
+  if (!ok) return;
+  if (TRAVEL_BOOKING_URL) { window.open(TRAVEL_BOOKING_URL, '_blank'); return; }
+  showSearching('travel-result', this);
+});
+
+/* Hotels search */
+document.getElementById('searchHotelsBtn').addEventListener('click', function() {
+  clearErrs('panel-hotels');
+  let ok = true;
+  if (!document.getElementById('hotel-dest').value.trim()) { setErr('fg-hotel-dest', true); ok = false; }
+  if (!checkin.value)  { setErr('fg-checkin', true);  ok = false; }
+  if (!checkout.value) { setErr('fg-checkout', true); ok = false; }
+  else if (checkout.value <= checkin.value) { setErr('fg-checkout', true); ok = false; }
+  if (!ok) return;
+  if (HOTEL_BOOKING_URL) { window.open(HOTEL_BOOKING_URL, '_blank'); return; }
+  showSearching('hotels-result', this);
+});
+
+/* Movies search */
+document.getElementById('findMoviesBtn').addEventListener('click', function() {
+  clearErrs('panel-movies');
+  let ok = true;
+  if (!document.getElementById('movie-city').value)           { setErr('fg-movie-city', true); ok = false; }
+  if (!document.getElementById('movie-name').value.trim())    { setErr('fg-movie-name', true); ok = false; }
+  if (!document.getElementById('movie-date').value)           { setErr('fg-movie-date', true); ok = false; }
+  if (!ok) return;
+  if (MOVIE_BOOKING_URL) { window.open(MOVIE_BOOKING_URL, '_blank'); return; }
+  showSearching('movies-result', this);
+});
+
+/* ── FAQ accordion ───────────────────────────────────── */
+document.querySelectorAll('.faq-q').forEach(q => {
+  const activate = () => {
+    const item   = q.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => { i.classList.remove('open'); i.querySelector('.faq-q').setAttribute('aria-expanded','false'); });
+    if (!isOpen) { item.classList.add('open'); q.setAttribute('aria-expanded','true'); }
+  };
+  q.addEventListener('click', activate);
+  q.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); } });
+});
+
+/* ── Contact form — validation + Google Sheets ───────── */
+const contactForm  = document.getElementById('contactForm');
+const submitBtn    = document.getElementById('submitBtn');
+const formSuccess  = document.getElementById('formSuccess');
+const formErrorMsg = document.getElementById('formErrorMsg');
+
+function validName(v)  { return v.trim().length >= 2; }
+function validEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()); }
+function validPhone(v) { return /^(\+91)?[6-9]\d{9}$/.test(v.replace(/[\s\-]/g,'')); }
+
+function setFieldErr(inputId, errId, show) {
+  document.getElementById(inputId).classList.toggle('error', show);
+  document.getElementById(errId).classList.toggle('show', show);
+}
+
+function resetBtn() {
+  submitBtn.disabled = false;
+  submitBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>Get Early Access`;
+}
+
+function showSuccess() {
+  formSuccess.classList.add('show');
+  formErrorMsg.classList.remove('show');
+  contactForm.reset();
+  resetBtn();
+}
+
+function showError() {
+  formErrorMsg.classList.add('show');
+  formSuccess.classList.remove('show');
+  resetBtn();
+}
+
+contactForm.addEventListener('submit', e => {
+  e.preventDefault();
+
+  const name  = document.getElementById('cf-name').value;
+  const email = document.getElementById('cf-email').value;
+  const phone = document.getElementById('cf-phone').value;
+
+  // Reset state
+  setFieldErr('cf-name',  'err-name',  false);
+  setFieldErr('cf-email', 'err-email', false);
+  setFieldErr('cf-phone', 'err-phone', false);
+  formSuccess.classList.remove('show');
+  formErrorMsg.classList.remove('show');
+
+  // Validate
+  let ok = true;
+  if (!validName(name))   { setFieldErr('cf-name',  'err-name',  true); ok = false; }
+  if (!validEmail(email)) { setFieldErr('cf-email', 'err-email', true); ok = false; }
+  if (!validPhone(phone)) { setFieldErr('cf-phone', 'err-phone', true); ok = false; }
+  if (!ok) return;
+
+  // Loading state
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = `<svg style="animation:spin .8s linear infinite" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>Submitting...`;
+
+  // Build GET URL — no-cors fetch (opaque response, no json parsing)
+  const url = SCRIPT_URL + "?" + new URLSearchParams({
+    name:  name.trim(),
+    email: email.trim(),
+    phone: phone.trim()
+  });
+
+  fetch(url, { method: "GET", mode: "no-cors" })
+    .then(() => { showSuccess(); })
+    .catch(() => { showError(); });
+});
+
+// Clear field errors on input
+[['cf-name','err-name'],['cf-email','err-email'],['cf-phone','err-phone']].forEach(([id,errId]) => {
+  document.getElementById(id).addEventListener('input', () => setFieldErr(id, errId, false));
+});
+
+/* ── Smooth scroll for anchor links ─────────────────── */
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  link.addEventListener('click', e => {
+    const target = document.querySelector(link.getAttribute('href'));
+    if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  });
+});
+</script>
+</body>
+</html>
