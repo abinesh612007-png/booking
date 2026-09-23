@@ -95,10 +95,7 @@ Switching between tabs dynamically displays the corresponding search form.
 
 The FAQ section uses an interactive accordion where users can expand one question at a time.
 
-It also supports keyboard interaction using:
 
-* `Enter`
-* `Space`
 
 ### 📩 Early Access Form
 
@@ -176,13 +173,13 @@ The current implementation contains the HTML, CSS, and JavaScript inside the mai
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
+git clone https://github.com/abinesh612007/booking.git
 ```
 
 ### 2. Navigate to the project
 
 ```bash
-cd YOUR_REPOSITORY
+cd booking
 ```
 
 ### 3. Open the website
@@ -371,9 +368,9 @@ Add an appropriate open-source license such as **MIT** if you want others to fre
 
 ## 👨‍💻 Author
 
-**Your Name**
+M ABINESHVAR
 
-GitHub: `https://github.com/YOUR_USERNAME`
+GitHub: `https://github.com/abinesh612007`
 
 ---
 
